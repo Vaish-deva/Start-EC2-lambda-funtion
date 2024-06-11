@@ -1,0 +1,63 @@
+#import boto3
+#region = 'eu-west-1'
+#instances = ['i-04bcf8497a0490314']
+#ec2 = boto3.client('ec2', region_name=region)
+
+#def lambda_handler(event, context):
+#    ec2.start_instances(InstanceIds=instances)
+#    print('started your instances: ' + str(instances))
+    
+
+
+import boto3
+import time
+
+def lambda_handler(event, context):
+    ec2 = boto3.client('ec2')
+    
+    # Instance IDs
+    instance_1 = 'i-013bbd25ba727d641'
+    instance_2 = 'i-06928ec0b9dc57585'
+    
+    # Check status of instance_1
+    response_1 = ec2.describe_instance_status(InstanceIds=[instance_1])
+    status_1 = response_1['InstanceStatuses'][0]['InstanceState']['Name'] if response_1['InstanceStatuses'] else 'stopped'
+    print(status_1)
+    
+    # Check status of instance_2
+    response_2 = ec2.describe_instance_status(InstanceIds=[instance_2])
+    status_2 = response_2['InstanceStatuses'][0]['InstanceState']['Name'] if response_2['InstanceStatuses'] else 'stopped'
+    
+    if status_1 == 'stopped':
+        # Start instance_1
+        ec2.start_instances(InstanceIds=[instance_1])
+        print(f'Starting instance {instance_1}')
+        
+        time.sleep(1 * 60)
+        
+        # Check the status of instance_2 again before starting it
+        response_2 = ec2.describe_instance_status(InstanceIds=[instance_2])
+        status_2 = response_2['InstanceStatuses'][0]['InstanceState']['Name'] if response_2['InstanceStatuses'] else 'stopped'
+        
+        if status_2 == 'stopped':
+            ec2.start_instances(InstanceIds=[instance_2])
+            print(f'Starting instance {instance_2}')
+        else:
+            print(f'Instance {instance_2} is already running')
+    elif status_1 == 'running':
+        # Check status of instance_2
+        if status_2 == 'stopped':
+            ec2.start_instances(InstanceIds=[instance_2])
+            print(f'Starting instance {instance_2}')
+        else:
+            print(f'Instance {instance_2} is already running')
+
+    return {
+        'statusCode': 200,
+        'body': 'Script executed successfully'
+    }
+    
+   
+
+
+    
