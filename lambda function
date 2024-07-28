@@ -1,13 +1,3 @@
-#import boto3
-#region = 'eu-west-1'
-#instances = ['i-04bcf8497a0490314']
-#ec2 = boto3.client('ec2', region_name=region)
-
-#def lambda_handler(event, context):
-#    ec2.start_instances(InstanceIds=instances)
-#    print('started your instances: ' + str(instances))
-    
-
 
 import boto3
 import time
@@ -16,8 +6,8 @@ def lambda_handler(event, context):
     ec2 = boto3.client('ec2')
     
     # Instance IDs
-    instance_1 = 'i-013bbd25ba727d641'
-    instance_2 = 'i-06928ec0b9dc57585'
+    instance_1 = ''
+    instance_2 = ''
     
     # Check status of instance_1
     response_1 = ec2.describe_instance_status(InstanceIds=[instance_1])
